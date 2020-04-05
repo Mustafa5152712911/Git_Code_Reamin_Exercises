@@ -20,4 +20,5 @@ type payload = {|
       </types:input-event>
     </types:processor-declaration>
   </types:enrichment>
+  <types:enrichment select="#bc6879e7-552d-4b71-a339-844949697a84"/>
 </types:mule>

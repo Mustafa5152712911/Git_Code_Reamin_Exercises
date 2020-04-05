@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-	<sub-flow name="Compare_Dataweave_apiSub_Flow" doc:id="b9980b4d-c5bc-4efe-bb51-0ea40d4ac616" >
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+	<os:object-store name="Object_store" doc:name="Object store" doc:id="e1079502-4424-400a-8262-b01344f9f5b0" />
+	<flow name="Compare_Dataweave_apiSub_Flow" doc:id="90a1a20d-2ab1-4385-986b-acc51c0527d2" >
 		<set-variable value='#[{
 	"employee": [{
 			"id": "A007",
@@ -38,9 +40,9 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 			"last_name": "Vaste"
 		}
 	]
-}]' doc:name="Set Variable" doc:id="3b177a4a-d80a-48e0-9143-63b7563e5f6e" variableName="records" />
-		<foreach doc:name="For Each" doc:id="a507444c-1906-4395-a413-b1d155310bd2" collection="#[vars.records]">
-			<ee:transform doc:name="Transform Message" doc:id="99ece225-946d-4609-99d7-5898dff2990a">
+}]' doc:name="Set Variable" doc:id="a0dcb866-01b8-4fbd-804a-b3183c9b1858" variableName="records"/>
+		<foreach doc:name="For Each" doc:id="55023afb-d997-444f-8380-4fc9bda04c88" collection="#[vars.records]">
+			<ee:transform doc:name="Transform Message" doc:id="fa3541a4-227b-4cef-9c81-1a7c7495257b">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -51,7 +53,7 @@ var payload2 =
 {"id":"A008","subjects":["Maths","English","Arts","Drawimgs"],"score":[70,85,69,90]},
 {"id":"A021","subjects":["Maths","English","Arts","Drawimgs"],"score":[90,87,77,95]}]}
 
-
+var ID= "A007" 
 ---
 
 
@@ -73,8 +75,10 @@ else
 ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-			<logger level="INFO" doc:name="Logger" doc:id="0e6a9883-8b28-40e5-b2ba-8d32925e1bc3" message="#[payload]" />
+			<logger level="INFO" doc:name="Logger" doc:id="3520e94c-5ab9-4a96-93d9-a6307929da4c" message="#[payload]"/>
+			<os:store doc:id="e475917a-4897-47a2-8885-0aa022e8e860" key="Students" objectStore="Object_store"/>
 		</foreach>
-		<set-payload value="Proceeded" doc:name="Set Payload" doc:id="086e55b1-7360-4dd4-b4d8-48b4a6f0fa06" />
-	</sub-flow>
+		<os:retrieve doc:name="Retrieve" doc:id="0258a298-24a9-43ed-a0cd-5b7151311373" key="Students" objectStore="Object_store"/>
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="bc83eceb-0335-4fe5-bcfc-10305ff583a1" />
+	</flow>
 </mule>
